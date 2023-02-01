@@ -1,27 +1,38 @@
 #include <iostream>
 #include <huffman/huffman.h>
 
-Huffman::Node::Node(uint8_t byte, int freq, const std::shared_ptr<Node>& left, const std::shared_ptr<Node>& right)
-	: byte_(byte), freq_(freq), left_(left), right_(right) {}
+Huffman::Node::Node(uint8_t byte, 
+		    int freq, 
+		    const std::shared_ptr<Node>& left, 
+		    const std::shared_ptr<Node>& right) noexcept
+		    				: byte_(byte), 
+		    				freq_(freq),
+		    				left_(left),
+		    				right_(right) {}
 
-uint8_t Huffman::Node::byte() const {
+uint8_t Huffman::Node::byte() const noexcept {
 	return byte_;
 }
 
-int Huffman::Node::freq() const {
+int Huffman::Node::freq() const noexcept {
 	return freq_;
 }
 
-std::shared_ptr<Huffman::Node> Huffman::Node::left() const {
+std::shared_ptr<Huffman::Node> Huffman::Node::left() const noexcept {
 	return left_;
 }
 
-std::shared_ptr<Huffman::Node> Huffman::Node::right() const {
+std::shared_ptr<Huffman::Node> Huffman::Node::right() const noexcept {
 	return right_;
 }
 
-Huffman::Huffman(const std::string& in, const std::string& out, bool encode)
-					: input_(in), output_(out), encode_(encode) {
+Huffman::Huffman(const std::string& in, 
+		 const std::string& out, 
+		 const bool encode)
+		 	   : input_(in),
+	       		   output_(out),
+	       		   encode_(encode) {
+
 	if (encode_) {
 		while(!input_.eof()) {
 			raw_bytes_.push_back(input_.byte());
@@ -37,7 +48,8 @@ Huffman::Huffman(const std::string& in, const std::string& out, bool encode)
 	}
 }
 
-void Huffman::preorder_print(std::shared_ptr<Node> root, std::queue<uint8_t>& q) {
+void Huffman::preorder_print(const std::shared_ptr<Node>& root,
+	       		     std::queue<uint8_t>& q) {
 	if (root == nullptr) {
 		return;
 	}
@@ -93,7 +105,9 @@ void Huffman::encode_data() {
 				}
 
 				for (int j = 0; j < cur_len; j++) {
-					writer.put_bit((byte_to_write[k] >> (7 - j)) & 0b1);
+					writer.put_bit(
+						(byte_to_write[k] >> (7 - j)) & 0b1
+					);
 				}
 			}
 		}
@@ -103,7 +117,10 @@ void Huffman::encode_data() {
 	compressed_bytes_ = finished_bytes_.size();
 }
 
-void Huffman::build_code(std::shared_ptr<Node> root, const Output::BitWriter& writer, const int len) {
+void Huffman::build_code(const std::shared_ptr<Node>& root, 
+			 const Output::BitWriter& writer, 
+			 const int len) {
+
 	if (root == nullptr) {
 		return;
 	}
@@ -128,8 +145,13 @@ void Huffman::encode() {
 		frequences[i]++;
 	}
 
-	auto cmp = [](std::shared_ptr<Node>& left, std::shared_ptr<Node>& right) { return left->freq() > right->freq();};
-	std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(cmp)> heap(cmp);
+	auto cmp = [](const std::shared_ptr<Node>& left, 
+		      const std::shared_ptr<Node>& right) { 
+		      return left->freq() > right->freq();
+	};
+	std::priority_queue<std::shared_ptr<Node>, 
+			    std::vector<std::shared_ptr<Node>>, 
+			    decltype(cmp)> heap(cmp);
 
 	for (auto i : frequences) {
 		heap.push(std::make_shared<Node>(i.first, i.second, nullptr, nullptr));
@@ -146,7 +168,7 @@ void Huffman::encode() {
 		heap.push(std::make_shared<Node>(0, first->freq() + second->freq(), first, second));
 	}
 
-	std::shared_ptr<Node> root = heap.top();
+	const std::shared_ptr<Node>& root = heap.top();
 
 	Output::BitWriter bw;
 	build_code(root, bw, 0);
@@ -208,7 +230,7 @@ void Huffman::decode() {
 	decode_data();
 }
 
-void Huffman::write_header(std::shared_ptr<Huffman::Node> root) {
+void Huffman::write_header(const std::shared_ptr<Huffman::Node>& root) {
 	if (root == nullptr) {
 		return;
 	}
@@ -240,7 +262,7 @@ void Huffman::read_header() {
 		q.push(input_.byte());
 	}
 
-	std::shared_ptr<Node> root = restore_tree(q);
+	const std::shared_ptr<Node>& root = restore_tree(q);
 	preorder_print(root, q);
 
 	Output::BitWriter bw;
@@ -264,7 +286,10 @@ void Huffman::clear() {
 	compressed_bytes_ = 0;
 }
 
-void Huffman::reset(const std::string& in, const std::string& out, bool encode) {
+void Huffman::reset(const std::string& in, 
+		    const std::string& out, 
+		    const bool encode) {
+
 	clear();
 
 	input_.reopen(in);

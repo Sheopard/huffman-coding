@@ -9,12 +9,12 @@ set(Headers
 )
 
 set(Sources
-	src/huffman/io/input.cpp
-	src/huffman/io/output.cpp
-	src/huffman/huffman.cpp
+	src/huffman/io/input.cc
+	src/huffman/io/output.cc
+	src/huffman/huffman.cc
 )
 
-add_executable(main.exe main.cpp)
+add_executable(main.exe main.cc)
 
 add_library(huffman-lib STATIC ${Sources} ${Headers})
 
