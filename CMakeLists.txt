@@ -14,8 +14,6 @@ set(Sources
 	src/huffman/huffman.cc
 )
 
-add_executable(main.exe main.cc)
-
 add_library(huffman-lib STATIC ${Sources} ${Headers})
 
 set_target_properties(huffman-lib PROPERTIES
@@ -25,4 +23,4 @@ set_target_properties(huffman-lib PROPERTIES
 
 target_include_directories(huffman-lib PUBLIC include)
 
-target_link_libraries(main.exe huffman-lib)
+add_subdirectory(examples)
