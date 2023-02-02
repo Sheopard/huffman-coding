@@ -1,14 +1,14 @@
 #include <iostream>
 #include <huffman/huffman.h>
 
-Huffman::Node::Node(uint8_t byte, 
-		    int freq, 
+Huffman::Node::Node(const uint8_t byte, 
+		    const int freq, 
 		    const std::shared_ptr<Node>& left, 
 		    const std::shared_ptr<Node>& right) noexcept
-		    				: byte_(byte), 
-		    				freq_(freq),
-		    				left_(left),
-		    				right_(right) {}
+		    			: byte_(byte), 
+		    			freq_(freq),
+		    			left_(left),
+		    			right_(right) {}
 
 uint8_t Huffman::Node::byte() const noexcept {
 	return byte_;
@@ -149,6 +149,7 @@ void Huffman::encode() {
 		      const std::shared_ptr<Node>& right) { 
 		      return left->freq() > right->freq();
 	};
+
 	std::priority_queue<std::shared_ptr<Node>, 
 			    std::vector<std::shared_ptr<Node>>, 
 			    decltype(cmp)> heap(cmp);
@@ -165,7 +166,12 @@ void Huffman::encode() {
 		second = heap.top();
 		heap.pop();
 
-		heap.push(std::make_shared<Node>(0, first->freq() + second->freq(), first, second));
+		heap.push(
+			std::make_shared<Node>(0, 
+				first->freq() + second->freq(), 
+				first, 
+				second)
+		);
 	}
 
 	const std::shared_ptr<Node>& root = heap.top();

@@ -17,7 +17,7 @@ class Huffman final {
 		std::shared_ptr<Node> left_;
 		std::shared_ptr<Node> right_;
 	public:
-		Node(uint8_t byte, int freq, 
+		Node(const uint8_t byte, const int freq, 
 		     const std::shared_ptr<Node>& left, 
 		     const std::shared_ptr<Node>& right) noexcept;
 
